@@ -87,5 +87,47 @@ $.ajax({
         }).then(function(response){
             currentUV.text(response.value);
         }); 
-        })
-})
+        var country = response.sys.country;
+        var forecastAPIcall = "https://api.openweathermap.org/data/2.5/forecast?&units=imperial&appid=" + APIkey + "&lat=" + latitude + "&lon=" + longitude;
+        $.ajax({
+            url: forecastAPIcall,
+            method: "GET"
+        }).then(function(response){
+            console.log(response);
+            $('#daily-forecast').empty();
+            for (var i = 1; i < response.list.length; i+=8) {
+                
+                var forecastDates = moment(response.list[i].dt_txt).format("L");
+                console.log(forecastDates);
+                var forecastColumn= $("<div class='col-12 col-md-6 col-lg forecast-day mb-3'>");
+                var forecastCard = $("<div class='card'>");
+                var forecastCardBody = $("<div class='card-body'>");
+                var forecastDate = $("<h5 class='card-title'>");
+                var forecastIcon = $("<img>");
+                var forecastTemperature = $("<p class='card-text mb-0'>");
+                var forecastHumidity = $("<p class='card-text mb-0'>");
+
+                $('#daily-forecast').append(forecastColumn);
+                forecastCol.append(forecastCard);
+                forecastCard.append(forecastCardBody);
+
+                forecastCardBody.append(forecastDate);
+                forecastCardBody.append(forecastIcon);
+                forecastCardBody.append(forecastTemp);
+                forecastCardBody.append(forecastHumidity);
+                
+                forecastIcon.attr("src", "https://openweathermap.org/img/w/" + response.list[i].weather[0].icon + ".png");
+                forecastIcon.attr("alt", response.list[i].weather[0].main)
+                forecastDate.text(forecastDates);
+                forecastTemperature.text(response.list[i].main.temp);
+                forecastTemperature.prepend("Temp: ");
+                forecastTemperature.append("&deg;F");
+                forecastHumidity.text(response.list[i].main.humidity);
+                forecastHumidity.prepend("Humidity: ");
+                forecastHumidity.append("%");
+                
+            }
+        });
+    });
+};
+
