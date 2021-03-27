@@ -24,19 +24,25 @@ var currentHumidity = $('#current-humidity');
 var currentWindSpeed = $('#current-wind-speed')
 var currentUV = $('#current-uv') ;
 var weatherInfoDiv =$('#weather-content');
-var clearCitySearch = ('#clear-city-search')
+var clearCitySearch = $('#clear-city-search')
 var cityList = [];
 var APIkey = "e1b762965cd10c81e93e8ed2fa42068a" //<- key i got from signing up for openweather
 var todaysDate = moment().format('L');
 $("#todays-date").text(todaysDate);
 
+searchHistoryFunction();
+showClear();
 //coding for the search bar
 
 $(document).on("submit", function() {
     event.preventDefault();
+
 var userSearchValue = citySearchInput.val().trim();
+
 currentWeatherConditions(userSearchValue)
+
 searchHistory(userSearchValue)
+
 citySearchInput.val('');
 });
 
@@ -44,24 +50,26 @@ citySearchButton.on("click", function(event){
     event.preventDefault();
     
     var userSearchValue = citySearchInput.val().trim();
+    
     currentWeatherConditions(userSearchValue)
     searchHistory(userSearchValue);
     citySearchInput.val('');
 });
-clearCitySearch.on("click", function() {
+clearCitySearch.on("click", function(){
     cityList = [];
-    listArray();
+    listCityArray();
+    $(this).addClass("hide");
 });
 
 searchHistoryList.on("click", "search-city-button", function(event) {
     var value = $(this).data("value");
-    currentWeatherConditions(userSearchValue);
+    currentWeatherConditions(value);
     searchHistory(value);
 });
 
 function currentWeatherConditions(userSearchValue) {
     var APIcallURL = "https://api.openweathermap.org/data/2.5/weather?q=" + userSearchValue + "&units=imperial&appid=" + APIkey;
-}
+
 $.ajax({
     url: APIcallURL,
     method: "GET"
@@ -87,7 +95,8 @@ $.ajax({
         }).then(function(response){
             currentUV.text(response.value);
         }); 
-        var country = response.sys.country;
+
+       
         var forecastAPIcall = "https://api.openweathermap.org/data/2.5/forecast?&units=imperial&appid=" + APIkey + "&lat=" + latitude + "&lon=" + longitude;
         $.ajax({
             url: forecastAPIcall,
@@ -96,7 +105,7 @@ $.ajax({
             console.log(response);
             $('#daily-forecast').empty();
             for (var i = 1; i < response.list.length; i+=8) {
-                
+
                 var forecastDates = moment(response.list[i].dt_txt).format("L");
                 console.log(forecastDates);
                 var forecastColumn= $("<div class='col-12 col-md-6 col-lg forecast-day mb-3'>");
@@ -108,12 +117,12 @@ $.ajax({
                 var forecastHumidity = $("<p class='card-text mb-0'>");
 
                 $('#daily-forecast').append(forecastColumn);
-                forecastCol.append(forecastCard);
+                forecastColumn.append(forecastCard);
                 forecastCard.append(forecastCardBody);
 
                 forecastCardBody.append(forecastDate);
                 forecastCardBody.append(forecastIcon);
-                forecastCardBody.append(forecastTemp);
+                forecastCardBody.append(forecastTemperature);
                 forecastCardBody.append(forecastHumidity);
                 
                 forecastIcon.attr("src", "https://openweathermap.org/img/w/" + response.list[i].weather[0].icon + ".png");
@@ -130,4 +139,68 @@ $.ajax({
         });
     });
 };
+
+    function searchHistory(userSearchValue) {
+       
+        if (userSearchValue) {
+         
+            if (cityList.indexOf(userSearchValue) === -1) {
+                cityList.push(userSearchValue);
+    
+             
+                listCityArray();
+                clearCitySearch.removeClass("hide");
+                weatherInfoDiv.removeClass("hide");
+            } else {
+        
+                var removeIndex = cityList.indexOf(userSearchValue);
+                cityList.splice(removeIndex, 1);
+    
+                cityList.push(userSearchValue);
+    
+             
+                listCityArray();
+
+                clearCitySearch.removeClass("hide");
+                weatherInfoDiv.removeClass("hide");
+            }
+        }
+    }
+
+function listCityArray() {
+    
+    searchHistoryList.empty();
+  
+    cityList.forEach(function(city){
+        var searchHistoryItem = $('<li class="list-group-item city-btn">');
+        searchHistoryItem.attr("data-value", city);
+        searchHistoryItem.text(city);
+        searchHistoryList.prepend(searchHistoryItem);
+    });
+   
+    localStorage.setItem("cities", JSON.stringify(cityList));
+    
+
+}
+
+function searchHistoryFunction() {
+    if (localStorage.getItem("cities")) {
+        cityList = JSON.parse(localStorage.getItem("cities"));
+        var lastIndex = cityList.length - 1;
+     
+        listCityArray();
+       
+        if (cityList.length !== 0) {
+            currentWeatherConditions(cityList[lastIndex]);
+            weatherInfoDiv.removeClass("hide");
+        }
+    }
+}
+
+
+function showClear() {
+    if (searchHistoryList.text() !== "") {
+        clearCitySearch.removeClass("hide");
+    }
+}
 
