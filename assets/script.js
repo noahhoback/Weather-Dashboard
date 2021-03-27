@@ -24,8 +24,37 @@ var currentHumidity = $('#current-humidity');
 var currentWindSpeed = $('#current-wind-speed')
 var currentUV = $('#current-uv') ;
 var weatherInfoDiv =$('#weather-content');
+var clearCitySearch = ('#clear-city-search')
+var cityList = [];
 var APIkey = "e1b762965cd10c81e93e8ed2fa42068a" //<- key i got from signing up for openweather
 var todaysDate = moment().format('L');
 $("#todays-date").text(todaysDate);
 
+//coding for the search bar
 
+$(document).on("submit", function() {
+    event.preventDefault();
+var userSearchValue = citySearchInput.val().trim();
+currentWeatherConditions(userSearchValue)
+searchHistory(userSearchValue)
+citySearchInput.val('');
+});
+
+citySearchButton.on("click", function(event){
+    event.preventDefault();
+    
+    var userSearchValue = citySearchInput.val().trim();
+    currentWeatherConditions(userSearchValue)
+    searchHistory(userSearchValue);
+    citySearchInput.val('');
+});
+clearCitySearch.on("click", function() {
+    cityList = [];
+    listArray();
+});
+
+searchHistoryList.on("click", "search-city-button", function(event) {
+    var value = $(this).data("value");
+    currentWeatherConditions(userSearchValue);
+    searchHistory(value);
+})
