@@ -15,14 +15,17 @@ i will also want to display the current date and time so perhaps using moment.js
 
 
 //listing variables i will need before i start code 
-var searchHistoryList = ;
-var citySearchInput = ;
-var citySearchButton = ; 
-var currentCity = ;
-var currentTemperature = ;
-var currentHumidity = ;
-var currentWindSpeed =;
-var currentUV = ;
-var weatherInfoDiv = ;
+var searchHistoryList = $('#search-history-list');
+var citySearchInput = $('#city-search');
+var citySearchButton = $('#city-search-button'); 
+var currentCity = $('#current-city');
+var currentTemperature = $('#current-temperature');
+var currentHumidity = $('#current-humidity');
+var currentWindSpeed = $('#current-wind-speed')
+var currentUV = $('#current-uv') ;
+var weatherInfoDiv =$('#weather-content');
 var APIkey = "e1b762965cd10c81e93e8ed2fa42068a" //<- key i got from signing up for openweather
-var todaysDate = ;
+var todaysDate = moment().format('L');
+$("#todays-date").text(todaysDate);
+
+
