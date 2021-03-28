@@ -94,6 +94,27 @@ $.ajax({
             method: "GET"
         }).then(function(response){
             currentUV.text(response.value);
+            
+         /*   if (currentUV.innerHTML <= 1) {
+                currentUV.addClass("blue")
+            }
+           if ((currentUV.text(response.value) > 1) && (currentUV.text(response.value) <= 3)) {
+                currentUV.addClass("green")
+            }
+            if ((currentUV.text(response.value) > 3) && (currentUV.text(response.value) <= 5)) {
+                currentUV.addClass("yellow")
+            }
+             if ((currentUV.text(response.value) > 5) && (currentUV.text(response.value) <= 7)) {
+                currentUV.addClass("orange")
+            }
+          if ((currentUV.text(response.value) > 7) && (currentUV.text(response.value) <= 9)) {
+                currentUV.addClass("red")
+            }
+           if ((currentUV.text(response.value) > 9) && (currentUV.text(response.value) <= 3)) {
+                currentUV.addClass("pink")
+                }
+            else (currentUV.addClass("purple"))
+*/
         }); 
 
        
